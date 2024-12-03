@@ -1,11 +1,14 @@
 const express = require("express");
 const app = express();
-const cors = require('cors')
-const bodyParser = require('body-parser');
+const cors = require("cors");
+const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 
+const morgan = require("morgan"); // For logging requests
+
+// Import Routes
 const getAllPatients = require("./routes/api/getAllPatients");
 const getPatientByID = require("./routes/api/getPatientByID");
 const createPatient = require("./routes/api/createPatient");
@@ -22,19 +25,23 @@ const PrescriptionRoute = require("./routes/PrescriptionRoute.js");
 const InvoiceRoute = require("./routes/InvoiceRoute.js");
 const ProfileRoute = require("./routes/ProfileRoute.js");
 
-
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.set('strictQuery', true);
-mongoose.connect(process.env.MONGOCONNECTION, { useNewUrlParser: true });
+// Log all requests using Morgan
+app.use(morgan("dev"));
 
+mongoose.set("strictQuery", true);
 
-app.listen(process.env.PORT, () => {
-    console.log("App listening on port " + process.env.PORT);
-})
+// Database Connection
+const dbUrl = process.env.MONGOCONNECTION || "mongodb://localhost:27017";
+const port = process.env.PORT || 3001;
 
+mongoose.connect(dbUrl, { useNewUrlParser: true });
+
+// Routes
 app.use(LoginRegisterRoute);
 app.use(DashboardRoute);
 app.use(UserRoute);
@@ -45,27 +52,31 @@ app.use(MedicineRoute);
 app.use(PrescriptionRoute);
 app.use(InvoiceRoute);
 app.use(ProfileRoute);
+app.use("/api/paypal", require("./routes/api/paypal"));
 
-
-
-// // API that get all patients
-// app.get('/patients', getAllPatients);
-
-// //API that gets a patient by ID
-// app.get('/patients/:id', getPatientByID);
-
-// //API for adding a patient
-// app.post('/patients', createPatient);
-
-// //API for editting a details of the patient by ID 
-// app.put('/patients/:id', editPatientByID);
-
-// //API for deleting a  patient by ID
-// app.delete('/patients/:id', deletePatientByID);
-app.use('/api/paypal', require('./routes/api/paypal'));
-
-
+// Default Route
 app.get("/", (req, res) => {
-    res.send("hello world");
+  res.send("hello world");
 });
 
+// Global Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack); // Log the error stack
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+});
+
+// 404 Handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+  });
+});
+
+// Start the Server
+app.listen(port, () => {
+  console.log("App listening on port " + port);
+});

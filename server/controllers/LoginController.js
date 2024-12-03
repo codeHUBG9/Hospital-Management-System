@@ -34,6 +34,7 @@ const isLoginValid = (email, password) => {
 const loginUser = (req, res) => {
     const { email, password } = req.body;
 
+    console.log("Login User",req.body)
     const loginValidStatus = isLoginValid(email, password);
     if (!loginValidStatus.status) {
         res.status(400).json({ message: "error", errors: loginValidStatus.errors });
@@ -61,7 +62,8 @@ const loginUser = (req, res) => {
                             "userId": user._id
                         };
 
-                        const token = jwt.sign({ id: user._id, userType: user.userType }, process.env.SECRET_KEY, { expiresIn: "365d" });
+                        // const token = jwt.sign({ id: user._id, userType: user.userType }, process.env.SECRET_KEY, { expiresIn: "365d" });
+                        const token = jwt.sign({ id: user._id, userType: user.userType }, "CodeXg9", { expiresIn: "365d" });
                         res.json({ message: "success", user: currentUser, token: token });
                     }
                 });

@@ -46,3 +46,12 @@ This is a Hospital Management System built using the MERN Stack (MongoDB, Expres
 
 <img width="1440" alt="Screenshot 2023-04-10 at 11 37 24 AM" src="https://user-images.githubusercontent.com/33474725/230935305-87750fda-d25c-486e-99de-12e8af936795.png">
 
+
+
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/codeHUBG9/Hospital-Management-System.git
+git push -u origin main
+

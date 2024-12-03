@@ -30,6 +30,7 @@ function Login() {
             email: form.email.value,
             password: form.password.value
         }
+        debugger
         fetch('http://localhost:3001/login', {
             method: "POST",
             headers: {

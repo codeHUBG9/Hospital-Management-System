@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 
 function adminAuth(req, res, next) {
-    // console.log("adminAuth hit",);
+    console.log("adminAuth hit",);
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -13,7 +13,7 @@ function adminAuth(req, res, next) {
         if (err) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
-        // console.log("adminAuth ",payload);
+        console.log("adminAuth ",payload);
         if (payload.userType == "Admin") {
             next();
         }
